@@ -1,0 +1,107 @@
+{block content}        
+ <div class="container">       
+    <div class="row">
+
+            <div class="col-lg-12">
+                <h1 class="page-header">Registracia
+                   
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="{$basePath}">Home</a>
+                    </li>
+                    <li class="active">Registracia</li>
+                </ol>
+            </div>
+
+        </div>    
+           <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            {form registerForm class=>"reg-page"}
+                <div class="reg-header">
+                    <h2>Zaregistruj sa</h2>
+                    <p>Už si zaregistrovaný? 
+                        <a href="{$basePath}/#login" class="color-green">
+                            Prihlásiť
+                        </a> sa na tvoj účet.</p>                    
+                </div>
+
+                <label>Email <span class="color-red">*</span></label>
+                {input mail}
+           
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Heslo <span class="color-red">*</span></label>
+                        {input password}
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Potvrď heslo <span class="color-red">*</span></label>
+                        {input passwordVerify}
+                    </div>
+                </div>
+                
+                <label>Celé meno</label>
+                {input name}
+                <label>O mne</label>
+                {input about_me}
+                <label>Skúsenosti</label>
+                {input skills}
+                
+                <label>Referencie</label>
+                {input references}
+                
+                
+                <hr>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label class="checkbox">
+                            <input type="checkbox"> 
+                            I read <a href="page_terms.html" class="color-green">Terms and Conditions</a>
+                        </label>                        
+                    </div>
+                    <div class="col-lg-6 text-right">
+                        {input submit}
+                    </div>
+                </div>
+            {/form}
+        </div>
+    </div>              
+              
+  </div>       
+
+        <!-- JavaScript -->
+        <script src="{$basePath}/js/template/jquery-1.10.2.js"></script>
+        <script src="{$basePath}/js/template/bootstrap.js"></script>
+
+    <!-- Custom JavaScript for the Side Menu and Smooth Scrolling -->
+    <script>
+    $("#menu-close").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+    </script>
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#sidebar-wrapper").toggleClass("active");
+    });
+    </script>
+    <script>
+    $(function() {
+        $('a[href*=#]:not([href=#])').click(function() {
+            if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
+
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                if (target.length) {
+                    $('html,body').animate({
+                        scrollTop: target.offset().top
+                    }, 1000);
+                    return false;
+                }
+            }
+        });
+    });
+    </script>
+
+{/block}

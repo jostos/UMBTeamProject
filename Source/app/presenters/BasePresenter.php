@@ -10,47 +10,47 @@ use Nette,
  * Base presenter for all application presenters.
  */
 abstract class BasePresenter extends Nette\Application\UI\Presenter
-{	
-        public function handleSignOut()
-        {
-		$this->getUser()->logout();
-		$this->flashMessage('You have been signed out.');
-		$this->redirect('Homepage:');
-        }
-        
+{
+        /** @var Nette\Database\Context @inject */
         public $database;
 
-        function __construct(Nette\Database\Context $database)
+        public function handleSignOut()
         {
-            $this->database = $database;
+		$user = $this->getUser();
+                if($user->isLoggedIn()){
+                    $user->logout();
+		    $this->flashMessage('Boli ste odhlásený.');
+		    $this->redirect('Homepage:');
+                }else{
+		    $this->flashMessage('Nikto nie je prihlásený.');
+                }
         }
-
-        public function beforeRender() 
+        
+        public function beforRender()
         {
                 $user = $this->getUser();
                 $this->template->user = $user;
-                $rows = $this->database->table('users')
-                        ->where('id', $user->id)->fetch();
-                if($user->isLoggedIn()){
-                    $this->template->name = $rows->username;
-                    $this->template->email = $rows->email;
-                }
         }
-    
-	protected function createComponentSignInForm()
+        
+        protected function createComponentSignInForm()
 	{
 		$form = new Form;
-		$form->addText('username', 'Username:',10)
-                        ->setAttribute("placeholder","meno")
-			->setRequired('Prosím vlož svoje prihlasovacie meno.');
+		$form->addText('email', 'E-mail:')
+                     ->setAttribute("placeholder","E-mail")
+	             ->setRequired('Prosím vlož svoj prihlasovací e-mail.')
+                     ->setDefaultValue("")
+                     ->getControlPrototype()->setClass("form-control");
 
-		$form->addPassword('password', 'Password:',10)
-                        ->setAttribute("placeholder","heslo")
-			->setRequired(' Prosím vlož svoje heslo.');
+		$form->addPassword('password', 'Heslo:')
+                     ->setAttribute("placeholder","heslo")
+		     ->setRequired(' Prosím vlož svoje heslo.')
+                     ->setDefaultValue("")
+                     ->getControlPrototype()->setClass("form-control");
 
-		$form->addCheckbox('remember', 'Zostaň prihlásený.');
+		$form->addCheckbox('remember', ' Zostaň prihlásený.');
 
-		$form->addSubmit('send', 'Login');
+		$form->addSubmit('send', 'Login')
+                     ->getControlPrototype()->setClass("btn btn-lg btn-primary btn-block");
 
 		$form->onSuccess[] = $this->signInFormSucceeded;
 		return $form;
@@ -63,9 +63,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
                 
                 $user = $this->getUser();
                 try {
-                    $user->login($values->username, $values->password);
+                    $user->login($values->email, $values->password);
                     $user->setExpiration('10 minutes', TRUE);
-                    //$this->redirect(...);
 
                 } catch (Nette\Security\AuthenticationException $e) {
                     $this->flashMessage($e->getMessage());
@@ -78,14 +77,11 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 		}
 
 		try {
-			$this->getUser()->login($values->username, $values->password);
-			$this->redirect('Homepage:');
+			$this->getUser()->login($values->email, $values->password);
+                        $this->redirect('Projekt:');
 
 		} catch (Nette\Security\AuthenticationException $e) {
 			$form->addError($e->getMessage());
 		}
-                $formData = $this->getSession('$formData');
-                $formData->remove();
-                $this->redirect('Homepage:default');
 	}
 }
